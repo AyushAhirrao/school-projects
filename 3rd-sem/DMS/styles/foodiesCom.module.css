@@ -1,0 +1,119 @@
+.hero {
+    background-image: url("/public/images/overlay.png");
+    padding: 3rem 8rem;
+
+}
+
+.foodBox {
+    padding: 3rem 0;
+    border-bottom: 1px solid black;
+}
+
+.foodTemplate {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.foodImage {
+    object-fit: cover;
+    border-radius: 5px;
+    box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.5);
+}
+
+.orderBtn {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.orderBtn button {
+
+    padding: 0.6rem 2rem;
+    background-color: yellow;
+    border: none;
+    font-size: 1.3rem;
+    border-radius: 5px;
+    margin-right: 10rem;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.15);
+
+}
+
+
+.rightContent {
+    padding: 2rem;
+}
+
+.lorem1 {
+    margin: 1rem 0;
+    line-height: 1.4;
+}
+
+.bgImage {
+    height: 500px;
+    z-index: 0;
+}
+
+
+.displayNone {
+    position: relative;
+    transition: 1s;
+    display: none;
+
+
+}
+
+.display {
+    position: relative;
+    transition: 1s;
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+
+}
+
+
+.popup {
+    background-color: rgb(255, 250, 227);
+    border-radius: 8px;
+    animation-name: popupAnimation;
+    animation-duration: 0.5s;
+    height: 30rem;
+    width: 50rem;
+    padding: 2rem;
+}
+
+@keyframes popupAnimation {
+    0% {
+        height: 0;
+    }
+
+    100% {
+        height: 30rem;
+    }
+}
+
+@keyframes popupAnimationRev {
+    100% {
+        height: 0;
+    }
+
+    0% {
+        height: 30rem;
+    }
+}
+
+.loginRequired {
+    display: flex;
+    justify-content: center;
+}
+
+.loginRequired a {
+    text-decoration: underline;
+    color: rgb(0, 114, 207);
+}
+
+.popupSize{
+    width: 1rem;
+}

@@ -1,0 +1,25 @@
+/* body {
+    background-color: red; 
+} */
+
+#navbar ul {
+    flex-direction: column;
+}
+
+#logo img {
+    height: 0px;
+}
+
+#services .box img {
+    height: 30px;
+}
+
+
+.fbox img {
+    height: 30px;
+}
+
+/* veggies */
+.vbox img {
+    height: 30px;
+}

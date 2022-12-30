@@ -1,0 +1,344 @@
+
+/* Resets */
+
+* {
+    margin: 0;
+    padding: 0;
+    /* font-family: 'Roboto', sans-serif; */
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+/* Navigation bar styling*/
+
+#navbar {
+    display: flex;
+    align-items: center;
+    position: relative;
+    position: sticky;
+    top: 0;
+}
+
+#navbar::before {
+    content: "";
+    background-color: black;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 65px;
+    width: 100%;
+    z-index: -1;
+    opacity: 0.7;
+}
+
+
+/* logo styling  */
+
+#logo {
+    margin: 10px 30px;
+}
+
+#logo img {
+    height: 43px;
+    margin: -1px 30px;
+    border-radius: 16px;
+}
+
+
+/* list styling */
+
+#navbar ul {
+    display: flex;
+}
+
+#navbar ul li {
+    list-style: none;
+    font-size: 1.5rem;
+}
+
+#navbar ul li a {
+    color: white;
+    display: block;
+    padding: 10px 10px;
+    border-radius: 30px;
+    text-decoration: none;
+}
+
+#navbar ul li a:hover {
+    color: black;
+    background: white;
+}
+
+
+/* home styling */
+
+#home {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 200px;
+    /* height: 400px; */
+    justify-content: center;
+    align-items: center;
+}
+
+#home::before {
+    content: "";
+    background: url(Resources/imgs/background/vegies2.jpg) no-repeat center center/cover;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 380px;
+    width: 100%;
+    z-index: -1;
+    opacity: 0.7;
+}
+
+#home h1 {
+    text-align: center;
+}
+
+#home p {
+    text-align: center;
+    font-size: 1.5rem;
+    color: rgb(0, 0, 0);
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+
+/* services styling */
+
+#services-container {
+    /* padding: 90px 0px; */
+    padding-top: 100px;
+    margin: 0px 0px;
+}
+
+#services {
+    margin: -5px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+#services .box {
+    border: 2px solid rgb(134, 131, 131);
+    padding: 26px;
+    margin: 11px;
+    border-radius: 25px;
+    background-color: rgb(224, 228, 233);
+}
+
+#services .box img {
+    padding: 15px;
+    height: 110px;
+    margin: auto;
+    display: block;
+    border-radius: 30px;
+}
+
+#services p {
+    text-align: center;
+}
+
+#services a {
+    text-decoration: none;
+    color: black;
+}
+
+#services :hover {
+    /* color: gray; */
+    background-color: rgb(203, 196, 196);
+}
+
+
+/* Fuits section */
+
+#fruits-container {
+    /* padding: 90px 0px; */
+    padding-top: 70px;
+    margin: 0px 0px;
+}
+
+#fruits {
+    margin: 0px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.fbox {
+    border: 2px solid rgb(134, 131, 131);
+    padding: 30px;
+    margin: 10px;
+    border-radius: 25px;
+    background-color: rgb(224, 228, 233);
+}
+
+.fbox img {
+    padding: 15px;
+    height: 110px;
+    margin: auto;
+    display: block;
+    border-radius: 30px;
+}
+
+.fbox p {
+    text-align: center;
+}
+
+
+/* veggies section  */
+
+#veggies-container {
+    /* padding: 90px 0px; */
+    padding-top: 70px;
+    margin: 0px 0px;
+}
+
+#veggies {
+    margin: 0px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.vbox {
+    border: 2px solid rgb(134, 131, 131);
+    padding: 30px;
+    margin: 10px;
+    border-radius: 25px;
+    background-color: rgb(224, 228, 233);
+}
+
+.vbox img {
+    padding: 15px;
+    height: 110px;
+    margin: auto;
+    display: block;
+    border-radius: 30px;
+}
+
+.vbox p {
+    text-align: center;
+}
+
+
+/* daily styling */
+
+#daily-container {
+    /* padding: 90px 0px; */
+    padding-top: 70px;
+    margin: 0px 0px;
+}
+
+#daily {
+    margin: 0px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+
+/* dairy seaction  */
+
+#dairy-container {
+    /* padding: 90px 0px; */
+    padding-top: 70px;
+    margin: 0px 0px;
+}
+
+#dairy {
+    margin: 0px;
+    display: flex;
+    margin-bottom: 75px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+
+/* Contacts styling */
+
+#contact {
+    position: relative;
+}
+
+#contact::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.5;
+    background: url(Resources/imgs/background/contact\ us.jpg) no-repeat center center/cover
+}
+
+#contact-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 30px;
+}
+
+#contact-box input,
+#contact-box textarea {
+    width: 100%;
+    padding: 0.3rem;
+    border: 1px solid black;
+    border-radius: 8px;
+}
+
+#contact-box form {
+    width: 40%;
+}
+
+#contact-box label {
+    font-size: 1.2rem;
+}
+
+button.submit {
+    display: block;
+    border: 1px solid black;
+    margin: auto;
+    padding: 3px 10px;
+    border-radius: 5px;
+    align-items: center;
+}
+
+button.submit:hover {
+    background-color: rgb(206, 214, 220);
+    color: rgb(0, 0, 0);
+}
+
+
+/* utility classes */
+
+.h-primary {
+    color: rgb(49, 47, 47);
+    font-size: 2rem;
+    padding: 25px;
+}
+
+.h-secondary {
+    font-size: 1.5rem;
+}
+
+.btn {
+    padding: 5px 15px;
+    border-radius: 10px;
+    background-color: rgba(159, 107, 104, 0.431);
+    border: 2px solid rgb(156, 156, 156);
+    font-size: 1.3rem;
+    margin: 20px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    color: rgb(255, 255, 255);
+}
+
+.center {
+    text-align: center;
+}
