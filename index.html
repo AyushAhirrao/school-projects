@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Marks Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f3f3f3;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        input[type="text"],
+        input[type="number"],
+        button {
+            width: calc(100% - 20px);
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 20px auto;
+        }
+        #students {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .student-card {
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+        .student-card h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .student-card p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Student Marks Calculator</h1>
+    <div id="form">
+        <div>
+            <label for="name">Student Name:</label>
+            <input type="text" id="name">
+        </div>
+        <div>
+            <label for="subject1">Subject 1:</label>
+            <input type="number" id="subject1" min="0" max="100">
+        </div>
+        <div>
+            <label for="subject2">Subject 2:</label>
+            <input type="number" id="subject2" min="0" max="100">
+        </div>
+        <div>
+            <label for="subject3">Subject 3:</label>
+            <input type="number" id="subject3" min="0" max="100">
+        </div>
+        <button onclick="addStudent()">Add Student</button>
+    </div>
+    <div id="result"></div>
+    <div id="students"></div>
+
+    <script>
+        let studentsData = [];
+
+        function addStudent() {
+            const name = document.getElementById('name').value.trim();
+            const subject1 = parseFloat(document.getElementById('subject1').value);
+            const subject2 = parseFloat(document.getElementById('subject2').value);
+            const subject3 = parseFloat(document.getElementById('subject3').value);
+
+            if (name === '' || isNaN(subject1) || isNaN(subject2) || isNaN(subject3)) {
+                alert('Please enter valid data for all fields.');
+                return;
+            }
+
+            const totalMarks = subject1 + subject2 + subject3;
+            const averageMarks = totalMarks / 3;
+            let grade = '';
+
+            if (averageMarks >= 90) {
+                grade = 'A';
+            } else if (averageMarks >= 80) {
+                grade = 'B';
+            } else if (averageMarks >= 70) {
+                grade = 'C';
+            } else if (averageMarks >= 60) {
+                grade = 'D';
+            } else {
+                grade = 'F';
+            }
+
+            const student = {
+                name: name,
+                marks: [subject1, subject2, subject3],
+                totalMarks: totalMarks,
+                averageMarks: averageMarks.toFixed(2),
+                grade: grade
+            };
+
+            studentsData.push(student);
+
+            displayResults(student);
+            displayStudents();
+            clearForm();
+        }
+
+        function displayResults(student) {
+            const resultElement = document.getElementById('result');
+            resultElement.innerHTML = `
+                <div class="student-card">
+                    <h3>${student.name}'s Results</h3>
+                    <p>Total Marks: ${student.totalMarks}</p>
+                    <p>Average Marks: ${student.averageMarks}</p>
+                    <p>Grade: ${student.grade}</p>
+                </div>
+            `;
+        }
+
+        function displayStudents() {
+            const studentsElement = document.getElementById('students');
+            studentsElement.innerHTML = '';
+            studentsData.forEach(student => {
+                const studentDiv = document.createElement('div');
+                studentDiv.classList.add('student-card');
+                studentDiv.innerHTML = `
+                    <h3>${student.name}</h3>
+                    <p>Total Marks: ${student.totalMarks}</p>
+                    <p>Average Marks: ${student.averageMarks}</p>
+                    <p>Grade: ${student.grade}</p>
+                `;
+                studentsElement.appendChild(studentDiv);
+            });
+        }
+
+        function clearForm() {
+            document.getElementById('name').value = '';
+            document.getElementById('subject1').value = '';
+            document.getElementById('subject2').value = '';
+            document.getElementById('subject3').value = '';
+        }
+    </script>
+</body>
+</html>
