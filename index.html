@@ -3,27 +3,503 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webcam Stream</title>
+    <title>QR Code Check-in System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f7;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            margin-bottom: 8px;
+            font-size: 1.8rem;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scanner-area {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        
+        #reader {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        
+        button {
+            background-color: #6366f1;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            flex-grow: 1;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #4f46e5;
+        }
+        
+        button:disabled {
+            background-color: #c7c7c7;
+            cursor: not-allowed;
+        }
+        
+        button.secondary {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+        
+        button.secondary:hover {
+            background-color: #d1d5db;
+        }
+        
+        .result-area {
+            text-align: center;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .result-area.success {
+            background-color: #dcfce7;
+            border-left: 4px solid #22c55e;
+        }
+        
+        .result-area.error {
+            background-color: #fee2e2;
+            border-left: 4px solid #ef4444;
+        }
+        
+        .result-area h3 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .attendee-info {
+            margin-top: 16px;
+            padding: 16px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            text-align: left;
+        }
+        
+        .attendee-info p {
+            margin-bottom: 8px;
+        }
+        
+        .attendee-info p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .status-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .csv-input {
+            margin-bottom: 16px;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        .file-label {
+            display: block;
+            background-color: #e5e7eb;
+            color: #374151;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .file-label:hover {
+            background-color: #d1d5db;
+        }
+        
+        .file-name {
+            font-size: 0.9rem;
+            color: #6b7280;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .loader {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #6366f1;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #stats {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .stat-box {
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            flex: 1;
+            margin: 0 5px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6366f1;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+    </style>
 </head>
 <body>
-    <h1>Webcam Stream</h1>
-    <video id="video" width="640" height="480" autoplay></video>
+    <div class="container">
+        <header>
+            <h1>QR Code Check-in</h1>
+            <p>Scan attendee QR codes to check them in</p>
+        </header>
+        
+        <div class="card">
+            <div class="csv-input">
+                <label for="fileInput" class="file-label">Upload Attendee CSV</label>
+                <input type="file" id="fileInput" accept=".csv">
+                <div id="fileName" class="file-name">No file selected</div>
+            </div>
+            
+            <div id="stats">
+                <div class="stat-box">
+                    <div id="totalCount" class="stat-value">0</div>
+                    <div class="stat-label">Total Attendees</div>
+                </div>
+                <div class="stat-box">
+                    <div id="checkedInCount" class="stat-value">0</div>
+                    <div class="stat-label">Checked In</div>
+                </div>
+            </div>
+            
+            <div class="scanner-area hidden" id="scannerArea">
+                <div id="reader"></div>
+            </div>
+            
+            <div class="controls">
+                <button id="startButton" disabled>Start Scanning</button>
+                <button id="stopButton" class="secondary" disabled>Stop</button>
+            </div>
+            
+            <div id="resultArea" class="result-area hidden">
+                <div id="loader" class="loader hidden"></div>
+                <div id="resultContent" class="hidden">
+                    <div id="statusIcon" class="status-icon"></div>
+                    <h3 id="resultTitle"></h3>
+                    <p id="resultMessage"></p>
+                    <div id="attendeeInfo" class="attendee-info hidden"></div>
+                </div>
+            </div>
+            
+            <button id="downloadButton" class="secondary hidden">Download Check-in Data</button>
+        </div>
+    </div>
+
     <script>
-        var constraints = {
-            video: {
-                deviceId: { exact: "/dev/video2" } // Specify the device ID of /dev/video2 here
+        // Global variables
+        let attendees = [];
+        let checkedInIds = [];
+        let html5QrCode;
+        let isScanning = false;
+        
+        // DOM Elements
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        const scannerArea = document.getElementById('scannerArea');
+        const resultArea = document.getElementById('resultArea');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultMessage = document.getElementById('resultMessage');
+        const attendeeInfo = document.getElementById('attendeeInfo');
+        const statusIcon = document.getElementById('statusIcon');
+        const loader = document.getElementById('loader');
+        const resultContent = document.getElementById('resultContent');
+        const downloadButton = document.getElementById('downloadButton');
+        const totalCount = document.getElementById('totalCount');
+        const checkedInCount = document.getElementById('checkedInCount');
+        
+        // Event listeners
+        fileInput.addEventListener('change', handleFileUpload);
+        startButton.addEventListener('click', startScanning);
+        stopButton.addEventListener('click', stopScanning);
+        downloadButton.addEventListener('click', downloadCheckinData);
+        
+        // Initialize QR Scanner
+        function initQrScanner() {
+            html5QrCode = new Html5Qrcode("reader");
+        }
+        
+        // Handle file upload
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            fileName.textContent = file.name;
+            
+            Papa.parse(file, {
+                header: true,
+                complete: function(results) {
+                    attendees = results.data.filter(row => row['Application Id']);
+                    totalCount.textContent = attendees.length;
+                    startButton.disabled = false;
+                    downloadButton.classList.remove('hidden');
+                    
+                    // Check for cached check-ins
+                    const cachedCheckins = localStorage.getItem('checkedInIds');
+                    if (cachedCheckins) {
+                        checkedInIds = JSON.parse(cachedCheckins);
+                        checkedInCount.textContent = checkedInIds.length;
+                    }
+                }
+            });
+        }
+        
+        // Start QR Scanner
+        function startScanning() {
+            if (!html5QrCode) {
+                initQrScanner();
+            }
+            
+            scannerArea.classList.remove('hidden');
+            startButton.disabled = true;
+            stopButton.disabled = false;
+            
+            const qrConfig = { fps: 10, qrbox: { width: 250, height: 250 } };
+            
+            html5QrCode.start(
+                { facingMode: "environment" }, 
+                qrConfig, 
+                onScanSuccess
+            ).catch(error => {
+                console.error("Error starting scanner:", error);
+                showResult(false, "Camera Error", "Could not access the camera. Please check your permissions.");
+            });
+            
+            isScanning = true;
+        }
+        
+        // Stop QR Scanner
+        function stopScanning() {
+            if (html5QrCode && isScanning) {
+                html5QrCode.stop().then(() => {
+                    scannerArea.classList.add('hidden');
+                    startButton.disabled = false;
+                    stopButton.disabled = true;
+                    isScanning = false;
+                }).catch(error => {
+                    console.error("Error stopping scanner:", error);
+                });
+            }
+        }
+        
+        // Process QR Code
+        function onScanSuccess(decodedText) {
+            if (!isScanning) return;
+            
+            // Temporarily pause scanning
+            isScanning = false;
+            
+            // Show loader
+            resultArea.classList.remove('hidden', 'success', 'error');
+            loader.classList.remove('hidden');
+            resultContent.classList.add('hidden');
+            
+            // Simulate processing delay for UX
+            setTimeout(() => {
+                processQrCode(decodedText);
+            }, 1000);
+        }
+        
+        // Process QR Code data
+        function processQrCode(qrData) {
+            // Assuming QR contains an ID that matches the "Application Id" in CSV
+            let id = qrData.trim();
+            
+            // Check if ID exists in attendees list
+            const attendee = attendees.find(person => person['Application Id'] === id);
+            
+            if (!attendee) {
+                showResult(false, "Invalid QR Code", "This QR code is not registered in the system.");
+                return;
+            }
+            
+            // Check if already checked in
+            if (checkedInIds.includes(id)) {
+                showResult(false, "Already Checked In", "This attendee has already been checked in.", attendee);
+                return;
+            }
+            
+            // Valid check-in
+            checkedInIds.push(id);
+            saveCheckinData();
+            checkedInCount.textContent = checkedInIds.length;
+            
+            showResult(true, "Check-in Successful", "Attendee has been successfully checked in.", attendee);
+        }
+        
+        // Show scan result
+        function showResult(success, title, message, attendeeData = null) {
+            resultArea.classList.remove('hidden');
+            loader.classList.add('hidden');
+            resultContent.classList.remove('hidden');
+            
+            if (success) {
+                resultArea.classList.add('success');
+                resultArea.classList.remove('error');
+                statusIcon.innerHTML = '✅';
+            } else {
+                resultArea.classList.add('error');
+                resultArea.classList.remove('success');
+                statusIcon.innerHTML = '❌';
+            }
+            
+            resultTitle.textContent = title;
+            resultMessage.textContent = message;
+            
+            if (attendeeData) {
+                attendeeInfo.classList.remove('hidden');
+                attendeeInfo.innerHTML = `
+                    <p><strong>ID:</strong> ${attendeeData['Application Id']}</p>
+                    <p><strong>Name:</strong> ${attendeeData['Name']}</p>
+                    <p><strong>Email:</strong> ${attendeeData['Email']}</p>
+                    <p><strong>Phone:</strong> ${attendeeData['Contact number']}</p>
+                    <p><strong>Role:</strong> ${attendeeData['Applying as']}</p>
+                    <p><strong>Team Size:</strong> ${attendeeData['Team size']}</p>
+                `;
+            } else {
+                attendeeInfo.classList.add('hidden');
+            }
+            
+            // Resume scanning after a delay
+            setTimeout(() => {
+                if (html5QrCode) {
+                    isScanning = true;
+                }
+            }, 3000);
+        }
+        
+        // Save check-in data to local storage
+        function saveCheckinData() {
+            localStorage.setItem('checkedInIds', JSON.stringify(checkedInIds));
+        }
+        
+        // Download check-in data as CSV
+        function downloadCheckinData() {
+            if (checkedInIds.length === 0) {
+                alert("No check-ins to download");
+                return;
+            }
+            
+            // Create check-in records with timestamp
+            const checkinRecords = checkedInIds.map(id => {
+                const attendee = attendees.find(person => person['Application Id'] === id);
+                return {
+                    'Application Id': id,
+                    'Name': attendee ? attendee['Name'] : 'Unknown',
+                    'Email': attendee ? attendee['Email'] : 'Unknown',
+                    'Check-in Time': new Date().toISOString()
+                };
+            });
+            
+            // Convert to CSV
+            const csv = Papa.unparse(checkinRecords);
+            
+            // Create and download file
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', `checkins_${new Date().toISOString().slice(0,10)}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Initialize the page
+        window.onload = function() {
+            // Check for cached check-ins
+            const cachedCheckins = localStorage.getItem('checkedInIds');
+            if (cachedCheckins) {
+                checkedInIds = JSON.parse(cachedCheckins);
+                checkedInCount.textContent = checkedInIds.length;
             }
         };
-
-        navigator.mediaDevices.getUserMedia(constraints)
-            .then(function(stream) {
-                var video = document.getElementById('video');
-                video.srcObject = stream;
-                video.play();
-            })
-            .catch(function(err) {
-                console.log('Error accessing webcam:', err);
-            });
     </script>
 </body>
 </html>
